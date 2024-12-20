@@ -33,7 +33,9 @@ void displayData()
     char category[8][20];
     
     fscanf(file,"%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%s\n", category[0], category[1], category[2], category[3], category[4], category[5], category[6], category[7]);
-    
+    strcpy(category[0], "Location");
+    strcpy(category[1], "City");
+
     for(int i = 0; i < numberOfData; i++)
     {
         if(fscanf(file, "%[^,],%[^,],%d,%d,%d,%d,%[^,],%s\n", 
@@ -81,6 +83,8 @@ void searchData()
 
     // Location 1,Location 2,Price,Rooms,Bathrooms,CarParks,Type,Furnish
     fscanf(file,"%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%s\n", category[0], category[1], category[2], category[3], category[4], category[5], category[6], category[7]);
+    strcpy(category[0], "Location");
+    strcpy(category[1], "City");
 
     while(categoryIndex < 0 ||  categoryIndex > 7)
     {
@@ -157,350 +161,132 @@ void searchData()
     fclose(file);
 }
 
-void sortData()
-{
-    int numberOfData = 1000, categoryIndex = -1;
+void sortData() {
+    int numberOfData = 10000, categoryIndex = -1;
     FILE *file = fopen("file.csv", "r");
     char category[8][20], column[20], sortOption[5];
     Hotel data[numberOfData], temp;
 
-    if(file == NULL)
-    {
-        printf("error");
+    if (file == NULL) {
+        printf("Error opening file.\n");
         return;
     }
 
-    fscanf(file, "%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%s\n", category[0],category[1],category[2],category[3],category[4],category[5],category[6],category[7]);
+    fscanf(file, "%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%s\n",
+           category[0], category[1], category[2],
+           category[3], category[4], category[5],
+           category[6], category[7]);
 
-    for(int i = 0; i < numberOfData; i++)
-    {
-        if(fscanf(file, "%[^,],%[^,],%d,%d,%d,%d,%[^,],%s\n", data[i].location1, data[i].location2, &data[i].price, &data[i].room, &data[i].bathroom, &data[i].carPark, data[i].type, data[i].furnish) != 8)
-        {
+    strcpy(category[0], "Location");
+    strcpy(category[1], "City");
+
+    for (int i = 0; i < numberOfData; i++) {
+        if (fscanf(file, "%[^,],%[^,],%d,%d,%d,%d,%[^,],%s\n",
+                   data[i].location1,
+                   data[i].location2,
+                   &data[i].price,
+                   &data[i].room,
+                   &data[i].bathroom,
+                   &data[i].carPark,
+                   data[i].type,
+                   data[i].furnish) != 8) {
             numberOfData = i;
             break;
         }
-        
     }
+    
+    fclose(file);
 
-    while(categoryIndex < 0 || categoryIndex > 7)
-    {
+    while (categoryIndex < 0 || categoryIndex > 7) {
         printf("Choose column: ");
         scanf("%[^\n]", column);
         getchar();
-        for(int i = 0; i <=7; i++)
-        {
-            if(strcmp(category[i], column) == 0)
-            {
+
+        for (int i = 0; i < 8; i++) {
+            if (strcmp(category[i], column) == 0) {
                 categoryIndex = i;
                 break;
             }
         }
-        if(categoryIndex < 0 || categoryIndex > 7)  printf("Column not found\n");
+
+        if (categoryIndex < 0 || categoryIndex > 7)
+            printf("Column not found\n");
     }
 
-    while(strcmp(sortOption,"asc") != 0 && strcmp(sortOption,"desc") != 0)
-    {
+    while (strcmp(sortOption, "asc") != 0 && strcmp(sortOption, "desc") != 0) {
         printf("Sort ascending or descending? ");
         scanf("%s", sortOption);
         getchar();
-        if(strcmp(sortOption,"asc") != 0 && strcmp(sortOption,"desc") != 0) printf("Choose only asc or desc\n");
+
+        if (strcmp(sortOption, "asc") != 0 && strcmp(sortOption, "desc") != 0)
+            printf("Error input\n");
     }
 
-    if(strcmp(sortOption, "asc") == 0)
-    {
-        switch(categoryIndex)
-        {
-            case 0:
-                for(int i = 0; i < (numberOfData - 1); i++)
-                {
-                    int swap = 0;
-                    for(int j = 0; j < (numberOfData - i - 1); j++)
-                    {
-                        if(data[j].location1[0] > data[j+1].location1[0])
-                        {
-                            temp = data[j];
-                            data[j] = data[j+1];
-                            data[j+1] = temp;
-                            swap = 1;
-                        }
-                    }
-                    if(swap == 0) break;
-                }
-                break;
-            case 1:
-                for(int i = 0; i < (numberOfData - 1); i++)
-                {
-                    int swap = 0;
-                    for(int j = 0; j < (numberOfData - i - 1); j++)
-                    {
-                        if(data[j].location2[0] > data[j+1].location2[0])
-                        {
-                            temp = data[j];
-                            data[j] = data[j+1];
-                            data[j+1] = temp;
-                            swap = 1;
-                        }
-                    }
-                    if(swap == 0) break;
-                }
-                break;
-            case 2:
-                for(int i = 0; i < (numberOfData - 1); i++)
-                {
-                    int swap = 0;
-                    for(int j = 0; j < (numberOfData - i - 1); j++)
-                    {
-                        if(data[j].price > data[j+1].price)
-                        {
-                            temp = data[j];
-                            data[j] = data[j+1];
-                            data[j+1] = temp;
-                            swap = 1;
-                        }
-                    }
-                    if(swap == 0) break;
-                }
-                break;
-            case 3:
-                for(int i = 0; i < (numberOfData - 1); i++)
-                {
-                    int swap = 0;
-                    for(int j = 0; j < (numberOfData - i - 1); j++)
-                    {
-                        if(data[j].room > data[j+1].room)
-                        {
-                            temp = data[j];
-                            data[j] = data[j+1];
-                            data[j+1] = temp;
-                            swap = 1;
-                        }
-                    }
-                    if(swap == 0) break;
-                }
-                break;
-            case 4:
-                for(int i = 0; i < (numberOfData - 1); i++)
-                {
-                    int swap = 0;
-                    for(int j = 0; j < (numberOfData - i - 1); j++)
-                    {
-                        if(data[j].bathroom > data[j+1].bathroom)
-                        {
-                            temp = data[j];
-                            data[j] = data[j+1];
-                            data[j+1] = temp;
-                            swap = 1;
-                        }
-                    }
-                    if(swap == 0) break;
-                }
-                break;
-            case 5:
-                for(int i = 0; i < (numberOfData - 1); i++)
-                {
-                    int swap = 0;
-                    for(int j = 0; j < (numberOfData - i - 1); j++)
-                    {
-                        if(data[j].carPark > data[j+1].carPark)
-                        {
-                            temp = data[j];
-                            data[j] = data[j+1];
-                            data[j+1] = temp;
-                            swap = 1;
-                        }
-                    }
-                    if(swap == 0) break;
-                }
-                break;
-            case 6:
-                for(int i = 0; i < (numberOfData - 1); i++)
-                {
-                    int swap = 0;
-                    for(int j = 0; j < (numberOfData - i - 1); j++)
-                    {
-                        if(data[j].type[0] > data[j+1].type[0])
-                        {
-                            temp = data[j];
-                            data[j] = data[j+1];
-                            data[j+1] = temp;
-                            swap = 1;
-                        }
-                    }
-                    if(swap == 0) break;
-                }
-                break;
-            case 7:
-                for(int i = 0; i < (numberOfData - 1); i++)
-                {
-                    int swap = 0;
-                    for(int j = 0; j < (numberOfData - i - 1); j++)
-                    {
-                        if(data[j].furnish[0] > data[j+1].furnish[0])
-                        {
-                            temp = data[j];
-                            data[j] = data[j+1];
-                            data[j+1] = temp;
-                            swap = 1;
-                        }
-                    }
-                    if(swap == 0) break;
-                }
-                break;
+
+    for (int i = 0; i < numberOfData - 1; i++) {
+        int swap = 0;
+        for (int j = 0; j < numberOfData - i - 1; j++) {
+            int condition = 0;
+
+            switch (categoryIndex) {
+                case 0:
+                    condition = strcmp(data[j].location1, data[j + 1].location1);
+                    break;
+                case 1:
+                    condition = strcmp(data[j].location2, data[j + 1].location2);
+                    break;
+                case 2:
+                    condition = data[j].price - data[j + 1].price;
+                    break;
+                case 3:
+                    condition = data[j].room - data[j + 1].room;
+                    break;
+                case 4:
+                    condition = data[j].bathroom - data[j + 1].bathroom;
+                    break;
+                case 5:
+                    condition = data[j].carPark - data[j + 1].carPark;
+                    break;
+                case 6:
+                    condition = strcmp(data[j].type, data[j + 1].type);
+                    break;
+                case 7:
+                    condition = strcmp(data[j].furnish, data[j + 1].furnish);
+                    break;
+            }
+
+            if ((strcmp(sortOption, "asc") == 0 && condition > 0) ||
+                (strcmp(sortOption, "desc") == 0 && condition < 0)) {
+                temp = data[j];
+                data[j] = data[j + 1];
+                data[j + 1] = temp;
+                swap = 1;
+            }
         }
-    }
-    else if(strcmp(sortOption, "desc") == 0)
-    {
-        switch(categoryIndex)
-        {
-            case 0:
-                for(int i = 0; i < (numberOfData - 1); i++)
-                {
-                    int swap = 0;
-                    for(int j = 0; j < (numberOfData - i - 1); j++)
-                    {
-                        if(data[j].location1[0] < data[j+1].location1[0])
-                        {
-                            temp = data[j];
-                            data[j] = data[j+1];
-                            data[j+1] = temp;
-                            swap = 1;
-                        }
-                    }
-                    if(swap == 0) break;
-                }
-                break;
-            case 1:
-                for(int i = 0; i < (numberOfData - 1); i++)
-                {
-                    int swap = 0;
-                    for(int j = 0; j < (numberOfData - i - 1); j++)
-                    {
-                        if(data[j].location2[0] < data[j+1].location2[0])
-                        {
-                            temp = data[j];
-                            data[j] = data[j+1];
-                            data[j+1] = temp;
-                            swap = 1;
-                        }
-                    }
-                    if(swap == 0) break;
-                }
-                break;
-            case 2:
-                for(int i = 0; i < (numberOfData - 1); i++)
-                {
-                    int swap = 0;
-                    for(int j = 0; j < (numberOfData - i - 1); j++)
-                    {
-                        if(data[j].price < data[j+1].price)
-                        {
-                            temp = data[j];
-                            data[j] = data[j+1];
-                            data[j+1] = temp;
-                            swap = 1;
-                        }
-                    }
-                    if(swap == 0) break;
-                }
-                break;
-            case 3:
-                for(int i = 0; i < (numberOfData - 1); i++)
-                {
-                    int swap = 0;
-                    for(int j = 0; j < (numberOfData - i - 1); j++)
-                    {
-                        if(data[j].room < data[j+1].room)
-                        {
-                            temp = data[j];
-                            data[j] = data[j+1];
-                            data[j+1] = temp;
-                            swap = 1;
-                        }
-                    }
-                    if(swap == 0) break;
-                }
-                break;
-            case 4:
-                for(int i = 0; i < (numberOfData - 1); i++)
-                {
-                    int swap = 0;
-                    for(int j = 0; j < (numberOfData - i - 1); j++)
-                    {
-                        if(data[j].bathroom < data[j+1].bathroom)
-                        {
-                            temp = data[j];
-                            data[j] = data[j+1];
-                            data[j+1] = temp;
-                            swap = 1;
-                        }
-                    }
-                    if(swap == 0) break;
-                }
-                break;
-            case 5:
-                for(int i = 0; i < (numberOfData - 1); i++)
-                {
-                    int swap = 0;
-                    for(int j = 0; j < (numberOfData - i - 1); j++)
-                    {
-                        if(data[j].carPark < data[j+1].carPark)
-                        {
-                            temp = data[j];
-                            data[j] = data[j+1];
-                            data[j+1] = temp;
-                            swap = 1;
-                        }
-                    }
-                    if(swap == 0) break;
-                }
-                break;
-            case 6:
-                for(int i = 0; i < (numberOfData - 1); i++)
-                {
-                    int swap = 0;
-                    for(int j = 0; j < (numberOfData - i - 1); j++)
-                    {
-                        if(data[j].type[0] < data[j+1].type[0])
-                        {
-                            temp = data[j];
-                            data[j] = data[j+1];
-                            data[j+1] = temp;
-                            swap = 1;
-                        }
-                    }
-                    if(swap == 0) break;
-                }
-                break;
-            case 7:
-                for(int i = 0; i < (numberOfData - 1); i++)
-                {
-                    int swap = 0;
-                    for(int j = 0; j < (numberOfData - i - 1); j++)
-                    {
-                        if(data[j].furnish[0] < data[j+1].furnish[0])
-                        {
-                            temp = data[j];
-                            data[j] = data[j+1];
-                            data[j+1] = temp;
-                            swap = 1;
-                        }
-                    }
-                    if(swap == 0) break;
-                }
-                break;
-        }
+        
+        if (swap == 0) break;
     }
 
-    if(data != NULL) printf("Data found. Detail of data:\n");
-    printf("%-15s %-15s %-15s %-10s %-10s %-10s %-10s %-10s\n", category[0],category[1],category[2],category[3],category[4],category[5],category[6],category[7]);
-
-    for(int i = 0; i < numberOfData; i++)
-    {
-        printf("%-15s %-15s %-15d %-10d %-10d %-10d %-10s %-10s\n", data[i].location1, data[i].location2, data[i].price, data[i].room, data[i].bathroom, data[i].carPark, data[i].type, data[i].furnish);        
+    printf("Data found. Detail of data:\n");
+    printf("%-15s %-15s %-15s %-10s %-10s %-10s %-10s %-10s\n",
+           category[0], category[1],
+           category[2], category[3],
+           category[4], category[5],
+           category[6], category[7]);
+    
+    for (int i = 0; i < 10; i++) {
+        printf("%-15s %-15s %-15d %-10d %-10d %-10d %-10s %-10s\n",
+               data[i].location1,
+               data[i].location2,
+               data[i].price,
+               data[i].room,
+               data[i].bathroom,
+               data[i].carPark,
+               data[i].type,
+               data[i].furnish);
     }
-
-    fclose(file);   
 }
+
 
 void exportData()
 {
@@ -549,4 +335,3 @@ int main()
     }
     return 0;
 }
-
